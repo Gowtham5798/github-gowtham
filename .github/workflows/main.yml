@@ -3,30 +3,26 @@ name: Build, push image to GCR and Deploy in Cloudrun
 on:
   push:
     branches:
-      - main
+      - feature/36
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
     env:
-      TAG: "1.0.${{ github.run_number }}"
+      # Reading version from version.txt file
+      VERSION: ${{ readFile('path/to/your/version.txt') || '1.0.0' }}
+      TAG: "${{ env.VERSION }}.${{ github.run_number }}"
     steps:
     - name: Check out code
       uses: actions/checkout@v2
     
     - name: Building Docker image
       run: |
-        cd //home/runner/work/github-gowtham/github-gowtham/Skipify/src/deidentify/
+        cd /home/runner/work/github-gowtham/github-gowtham/Skipify/src/deidentify/
         docker build -t cloudrun_image .
 
-    #- name: Determine image tag
-    #  id: tag
-    #  run: echo ::set-env name=IMAGE_TAG::v${{ github.run_number }}
-
-
-    # Authentication via credentials json
-    - id: 'auth'
-      uses: 'google-github-actions/auth@v2'
+    - name: Authentication via credentials json
+      uses: google-github-actions/auth@v2
       with:
         credentials_json: '${{ secrets.CLOUDRUN_GCP }}'
 
@@ -39,10 +35,8 @@ jobs:
     - name: Set Docker image tag
       id: set-tag
       run: |
+        # Set the image tag in terraform.tfvars
         sed -i 's/^image = ".*"$/image = "gcr.io\/skipify-demo\/cloudrun_image:${{ env.TAG }}"/' /home/runner/work/github-gowtham/github-gowtham/Skipify/tf/cloudrun/deidentify/terraform.tfvars
-        #echo 'image = "gcr.io/skipify-demo/cloudrun_image:${{ env.TAG }}"' > /home/runner/work/github-gowtham/github-gowtham/Skipify/tf/cloudrun/deidentify/terraform.tfvars
-        #echo "image = \"gcr.io/skipify-demo/cloudrun_image:${{ env.TAG }}\"" > /home/runner/work/github-gowtham/github-gowtham/Skipify/tf/cloudrun/deidentify/terraform.tfvars
-        #echo 'image = "gcr.io/skipify-demo/cloudrun_image:${{ env.TAG }}"' > /home/runner/work/github-gowtham/github-gowtham/Skipify/tf/cloudrun/deidentify/terraform.tfvars
         cat /home/runner/work/github-gowtham/github-gowtham/Skipify/tf/cloudrun/deidentify/terraform.tfvars
 
     - name: Set up Terraform
@@ -52,15 +46,12 @@ jobs:
 
     - name: Initialize Terraform
       run: |
-        pwd
         cd /home/runner/work/github-gowtham/github-gowtham/Skipify/tf/cloudrun/deidentify
-        ls
         terraform init
 
     - name: Terraform Plan
       run: |
         cd /home/runner/work/github-gowtham/github-gowtham/Skipify/tf/cloudrun/deidentify
-        ls
         terraform plan
 
     - name: Terraform Apply
