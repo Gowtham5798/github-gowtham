@@ -3,7 +3,7 @@ name: Build, push image to GCR and Deploy in Cloudrun
 on:
   push:
     branches:
-      - feature/36
+      - main
 
 jobs:
   build-and-push:
