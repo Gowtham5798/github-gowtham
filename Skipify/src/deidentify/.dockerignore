@@ -1,0 +1,14 @@
+# dockerignore
+# Exclude Python virtual environments
+__pycache__
+venv/
+env/
+*.pyc
+*.pyo
+*.pyd
+
+# Exclude version control files
+.git
+.svn
+.hg
+.gitignore
