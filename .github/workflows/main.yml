@@ -35,8 +35,7 @@ jobs:
     - name: Set Docker image tag
       id: set-tag
       run: |
-        # Set the image tag in terraform.tfvars
-        sed -i 's/^image = ".*"$/image = "gcr.io\/skipify-demo\/cloudrun_image:${{ env.TAG }}"/' /home/runner/work/github-gowtham/github-gowtham/Skipify/tf/cloudrun/deidentify/terraform.tfvars
+        echo "image = \"gcr.io/skipify-demo/cloudrun_image:${{ env.TAG }}\"" > /home/runner/work/github-gowtham/github-gowtham/Skipify/tf/cloudrun/deidentify/terraform.tfvars
         cat /home/runner/work/github-gowtham/github-gowtham/Skipify/tf/cloudrun/deidentify/terraform.tfvars
 
     - name: Set up Terraform
