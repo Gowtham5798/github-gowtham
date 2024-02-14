@@ -3,7 +3,7 @@ name: Build, push image to GCR and Deploy in Cloudrun
 on:
   push:
     branches:
-      - feature/36
+      - main
 
 jobs:
   build-and-push:
@@ -16,7 +16,7 @@ jobs:
     
     - name: Building Docker image
       run: |
-        cd //home/runner/work/cwx-projects/cwx-projects/Skipify/src/deidentify/
+        cd //home/runner/work/github-gowtham/github-gowtham/Skipify/src/deidentify/
         docker build -t cloudrun_image .
 
     #- name: Determine image tag
@@ -28,7 +28,7 @@ jobs:
     - id: 'auth'
       uses: 'google-github-actions/auth@v2'
       with:
-        credentials_json: '${{ secrets.CLOUDRUNTEST }}'
+        credentials_json: '${{ secrets.CLOUDRUN_GCP }}'
 
     - name: Push image to GCR
       run: |
@@ -39,11 +39,11 @@ jobs:
     - name: Set Docker image tag
       id: set-tag
       run: |
-        sed -i 's/^image = ".*"$/image = "gcr.io\/skipify-demo\/cloudrun_image:${{ env.TAG }}"/' /home/runner/work/cwx-projects/cwx-projects/Skipify/tf/cloudrun/deidentify/terraform.tfvars
-        #echo 'image = "gcr.io/skipify-demo/cloudrun_image:${{ env.TAG }}"' > /home/runner/work/cwx-projects/cwx-projects/Skipify/tf/cloudrun/deidentify/terraform.tfvars
-        #echo "image = \"gcr.io/skipify-demo/cloudrun_image:${{ env.TAG }}\"" > /home/runner/work/cwx-projects/cwx-projects/Skipify/tf/cloudrun/deidentify/terraform.tfvars
-        #echo 'image = "gcr.io/skipify-demo/cloudrun_image:${{ env.TAG }}"' > /home/runner/work/cwx-projects/cwx-projects/Skipify/tf/cloudrun/deidentify/terraform.tfvars
-        cat /home/runner/work/cwx-projects/cwx-projects/Skipify/tf/cloudrun/deidentify/terraform.tfvars
+        sed -i 's/^image = ".*"$/image = "gcr.io\/skipify-demo\/cloudrun_image:${{ env.TAG }}"/' /home/runner/work/github-gowtham/github-gowtham/Skipify/tf/cloudrun/deidentify/terraform.tfvars
+        #echo 'image = "gcr.io/skipify-demo/cloudrun_image:${{ env.TAG }}"' > /home/runner/work/github-gowtham/github-gowtham/Skipify/tf/cloudrun/deidentify/terraform.tfvars
+        #echo "image = \"gcr.io/skipify-demo/cloudrun_image:${{ env.TAG }}\"" > /home/runner/work/github-gowtham/github-gowtham/Skipify/tf/cloudrun/deidentify/terraform.tfvars
+        #echo 'image = "gcr.io/skipify-demo/cloudrun_image:${{ env.TAG }}"' > /home/runner/work/github-gowtham/github-gowtham/Skipify/tf/cloudrun/deidentify/terraform.tfvars
+        cat /home/runner/work/github-gowtham/github-gowtham/Skipify/tf/cloudrun/deidentify/terraform.tfvars
 
     - name: Set up Terraform
       uses: hashicorp/setup-terraform@v1
@@ -53,17 +53,17 @@ jobs:
     - name: Initialize Terraform
       run: |
         pwd
-        cd /home/runner/work/cwx-projects/cwx-projects/Skipify/tf/cloudrun/deidentify
+        cd /home/runner/work/github-gowtham/github-gowtham/Skipify/tf/cloudrun/deidentify
         ls
         terraform init
 
     - name: Terraform Plan
       run: |
-        cd /home/runner/work/cwx-projects/cwx-projects/Skipify/tf/cloudrun/deidentify
+        cd /home/runner/work/github-gowtham/github-gowtham/Skipify/tf/cloudrun/deidentify
         ls
         terraform plan
 
     - name: Terraform Apply
       run: |
-        cd /home/runner/work/cwx-projects/cwx-projects/Skipify/tf/cloudrun/deidentify
+        cd /home/runner/work/github-gowtham/github-gowtham/Skipify/tf/cloudrun/deidentify
         terraform apply -auto-approve
